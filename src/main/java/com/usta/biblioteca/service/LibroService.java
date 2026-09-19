@@ -38,7 +38,7 @@ public class LibroService {
     }
 
     public LibroResponse save(@NonNull LibroRequest libroRequest){
-        if(!libroRepository.existsByIsbn(libroRequest.isbn())){
+        if(libroRepository.existsByIsbn(libroRequest.isbn())){
             throw new BusinessRuleException("Libro existente");
         }
 

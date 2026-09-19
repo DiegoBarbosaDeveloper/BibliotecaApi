@@ -26,27 +26,27 @@ public class UsuarioController {
         List<UsuarioResponse>usuarios = usuarioService.getUsuarios();
         return ResponseEntity.ok(usuarios);
     }
-    @GetMapping("/id")
+    @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponse>getUsuariosById(@PathVariable Long id){
-        UsuarioResponse usuario = usuarioService.findById(id);
+        UsuarioResponse usuario = usuarioService.getUsuarioById(id);
         return  ResponseEntity.ok(usuario);
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioResponse>createUsuario(@Valid @ResponseBody UsuarioRequest request){
+    public ResponseEntity<UsuarioResponse>createUsuario(@Valid @RequestBody UsuarioRequest request){
         UsuarioResponse nuevoUsuario = usuarioService.save(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
     }
 
-    @PutMapping("/id")
+    @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponse>updateUsuario(
             @PathVariable Long id,
-            @Valid @ResponseBody UsuarioRequest request){
+            @Valid @RequestBody UsuarioRequest request){
         UsuarioResponse usuarioActualizado = usuarioService.update(id, request);
         return ResponseEntity.ok(usuarioActualizado);
     }
 
-    @DeleteMapping("/id")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void>deleteUsuario(@PathVariable Long id){
         usuarioService.deleteById(id);
         return  ResponseEntity.noContent().build();
