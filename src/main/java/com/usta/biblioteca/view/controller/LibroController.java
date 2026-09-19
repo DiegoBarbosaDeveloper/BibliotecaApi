@@ -23,10 +23,18 @@ public class LibroController {
     private final LibroRepository libroRepository;
 
     @GetMapping
-    public ResponseEntity <List<LibroResponse>> getAllLibros(@RequestParam String titulo){
-        if(titulo.isBlank()) {
+    public ResponseEntity <List<LibroResponse>> getAllLibros(@RequestParam (required = false) String titulo,
+        @RequestParam(required = false) Boolean disponible
+    ){
+        if(titulo.isBlank() && disponible == null) {
             List<LibroResponse> libros = libroService.getLibros();
             return ResponseEntity.ok(libros);
+        }
+        if (titulo.isBlank() && disponible != null){
+            return ResponseEntity.ok(libroService.getLibrosActivos(disponible));
+        }
+        if(!titulo.isBlank() && disponible != null){
+            return ResponseEntity.ok(libroService.getLibrosActivosPorTitulo(titulo, disponible));
         }
         return ResponseEntity.ok(libroService.getLibrosByTitulo(titulo));
     }
@@ -36,8 +44,6 @@ public class LibroController {
         LibroResponse libro = libroService.getLibro(id);
         return ResponseEntity.ok(libro);
     }
-
-
 
     @PostMapping
     public ResponseEntity<LibroResponse> createLibro(@Valid @RequestBody LibroRequest request){
