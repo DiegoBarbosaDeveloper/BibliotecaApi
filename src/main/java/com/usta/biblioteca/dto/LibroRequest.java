@@ -17,8 +17,7 @@ public record LibroRequest(
 
     @NotBlank(message = "El ISBN no puede estar vacío")
     @Size (min = 10, max = 13, message = "El ISBN debe tener entre 10 y 13 caracteres")
-    String isbn,
+    String isbn
 
-    @NotNull(message = "El estado de disponibilidad es obligatorio")
-    Boolean disponible
+
 ){}
