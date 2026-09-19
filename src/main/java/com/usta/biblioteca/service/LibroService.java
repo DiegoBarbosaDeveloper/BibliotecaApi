@@ -39,6 +39,13 @@ public class LibroService {
         return libroMapper.toResponse(libroRepository.findById(id).get());
     }
 
+    public List<LibroResponse> getLibrosByTitulo(@NonNull String titulo){
+        return libroRepository.findByTituloContainingIgnoreCase(titulo)
+                .stream()
+                .map(libroMapper::toResponse)
+                .toList();
+    }
+
     public LibroResponse save(@NonNull LibroRequest libroRequest){
         if(libroRepository.existsByIsbn(libroRequest.isbn())){
             throw new BusinessRuleException("Libro existente");
