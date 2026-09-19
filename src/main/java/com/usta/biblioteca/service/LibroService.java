@@ -1,9 +1,11 @@
 package com.usta.biblioteca.service;
 
+import com.usta.biblioteca.domain.EstadoPrestamo;
 import com.usta.biblioteca.dto.LibroRequest;
 import com.usta.biblioteca.dto.LibroResponse;
 import com.usta.biblioteca.mapper.LibroMapper;
 import com.usta.biblioteca.repository.LibroRepository;
+import com.usta.biblioteca.repository.UsuarioRepository;
 import com.usta.biblioteca.view.exception.BusinessRuleException;
 import com.usta.biblioteca.view.exception.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
@@ -21,6 +23,7 @@ import java.util.List;
 public class LibroService {
     private final LibroRepository libroRepository;
     private final LibroMapper libroMapper;
+    private final PrestamoService prestamoService;
 
     public List<LibroResponse> getLibros(){
         return libroRepository.findAll()
@@ -65,11 +68,10 @@ public class LibroService {
             throw new BusinessRuleException("Libro existente");
         }
 
-        return  libroMapper.toResponse(
-                    libroRepository.save(
-                            libroMapper.toEntity(libroRequest)
-                    )
-        );
+        var toCreate = libroMapper.toEntity(libroRequest);
+        toCreate.setDisponible(true);
+
+        return  libroMapper.toResponse(libroRepository.save(toCreate));
 
     }
 
@@ -80,10 +82,13 @@ public class LibroService {
         if (libroRepository.findById(id).isEmpty()){
             throw new ResourceNotFoundException("Libro no encontrado");
         }
-        if(libroRequest.isbn().isBlank() || libroRequest.titulo().isBlank()
+        if(libroRequest.titulo().isBlank()
                 || libroRequest.autor().isBlank()
         ){
             throw new BusinessRuleException("Las libros no puede ser vacíos");
+        }
+        if(libroRepository.existsByIsbnAndIdNot(libroRequest.isbn(), id)){
+            throw new BusinessRuleException("ISBN en uso");
         }
         var libroToUpdate = libroRepository.findById(id).get();
         libroMapper.update(libroToUpdate, libroRequest);
@@ -95,6 +100,13 @@ public class LibroService {
         if(!libroRepository.existsById(id)){
             throw new ResourceNotFoundException("Libro no encontrado");
         }
+
+        var lista = prestamoService.listar(EstadoPrestamo.DEVUELTO, id);
+
+        if(!lista.isEmpty()){
+            throw new BusinessRuleException("El libro contiene prestamos");
+        }
+
         libroRepository.deleteById(id);
     }
 

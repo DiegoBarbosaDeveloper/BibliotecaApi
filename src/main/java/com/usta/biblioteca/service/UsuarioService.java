@@ -1,9 +1,12 @@
 package com.usta.biblioteca.service;
 
+import com.usta.biblioteca.domain.EstadoPrestamo;
+import com.usta.biblioteca.domain.Prestamo;
 import com.usta.biblioteca.domain.Usuario;
 import com.usta.biblioteca.dto.UsuarioRequest;
 import com.usta.biblioteca.dto.UsuarioResponse;
 import com.usta.biblioteca.mapper.UsuarioMapper;
+import com.usta.biblioteca.repository.PrestamoRepository;
 import com.usta.biblioteca.repository.UsuarioRepository;
 import com.usta.biblioteca.view.exception.BusinessRuleException;
 import com.usta.biblioteca.view.exception.ResourceNotFoundException;
@@ -22,6 +25,7 @@ import java.util.List;
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
+    private final PrestamoRepository prestamoRepository;
 
     public List<UsuarioResponse> getUsuarios(){
         return usuarioRepository.findAll()
@@ -53,7 +57,7 @@ public class UsuarioService {
         if(!usuarioRepository.existsById(id)){
             throw new ResourceNotFoundException("Usuario no encontrado");
         }
-        if(usuarioRepository.existsByEmail(usuarioRequest.email())){
+        if(usuarioRepository.existsByEmailAndIdNot(usuarioRequest.email(), id)){
             throw new BusinessRuleException("Email en uso");
         }
         Usuario usuario = usuarioMapper.toEntity(usuarioRequest);
@@ -68,6 +72,16 @@ public class UsuarioService {
         if(!usuarioRepository.existsById(id)){
             throw new ResourceNotFoundException("Usuario no encontrado");
         }
+
+//        var lista = prestamoRepository.findAll()
+//                .stream()
+//                        .filter(x -> x.getUsuario().getId().equals(id));
+//
+        if (prestamoRepository.findAll().stream().anyMatch(x -> x.getUsuario().getId().equals(id))) {
+            throw new BusinessRuleException("Usuario contiene prestamos");
+        }
+
+
         usuarioRepository.deleteById(id);
     }
 
