@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
@@ -48,7 +49,8 @@ public class LibroController {
     @PostMapping
     public ResponseEntity<LibroResponse> createLibro(@Valid @RequestBody LibroRequest request){
         LibroResponse nuevoLibro = libroService.save(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoLibro);
+        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}").buildAndExpand(nuevoLibro.id()).toUri()).body(nuevoLibro);
     }
 
     @PutMapping("/{id}")
