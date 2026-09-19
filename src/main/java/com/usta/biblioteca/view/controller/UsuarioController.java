@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
@@ -35,7 +36,9 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<UsuarioResponse>createUsuario(@Valid @RequestBody UsuarioRequest request){
         UsuarioResponse nuevoUsuario = usuarioService.save(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
+        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}").buildAndExpand(nuevoUsuario.id()).toUri()).body(nuevoUsuario);
+
     }
 
     @PutMapping("/{id}")

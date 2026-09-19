@@ -34,13 +34,18 @@ public class LibroController {
         return ResponseEntity.ok(libro);
     }
 
+    @GetMapping()
+    public ResponseEntity<List<LibroResponse>> getLibroByTitle(@RequestParam String titulo){
+        return ResponseEntity.ok(libroService.getLibrosByTitulo(titulo));
+    }
+
     @PostMapping
     public ResponseEntity<LibroResponse> createLibro(@Valid @RequestBody LibroRequest request){
         LibroResponse nuevoLibro = libroService.save(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoLibro);
     }
 
-    @PutMapping("/id")
+    @PutMapping("/{id}")
     public ResponseEntity<LibroResponse> updateLibro(
             @PathVariable Long id,
             @Valid @RequestBody LibroRequest request){
@@ -48,7 +53,7 @@ public class LibroController {
         return ResponseEntity.ok(libroActualizado);
     }
 
-    @DeleteMapping("/id")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLibro(@PathVariable Long id){
         libroService.deleteById(id);
         return ResponseEntity.noContent().build();
