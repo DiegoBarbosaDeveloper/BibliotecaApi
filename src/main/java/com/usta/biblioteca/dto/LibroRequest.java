@@ -16,7 +16,7 @@ public record LibroRequest(
     String autor,
 
     @NotBlank(message = "El ISBN no puede estar vacío")
-    @Size (min = 10, max = 13, message = "El ISBN debe tener entre 10 y 13 caracteres")
+    @Size (min = 10, max = 15, message = "El ISBN debe tener entre 10 y 13 caracteres")
     String isbn
 
 
