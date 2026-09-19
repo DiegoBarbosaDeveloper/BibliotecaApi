@@ -46,6 +46,20 @@ public class LibroService {
                 .toList();
     }
 
+    public List<LibroResponse> getLibrosActivos(Boolean activos){
+        return libroRepository.findByDisponible(activos)
+                .stream()
+                .map(libroMapper::toResponse)
+                .toList();
+    }
+
+    public List<LibroResponse> getLibrosActivosPorTitulo(@NonNull String titulo, Boolean activos){
+        return libroRepository.findByTituloContainingIgnoreCaseAndDisponible(titulo, activos)
+                .stream()
+                .map(libroMapper::toResponse)
+                .toList();
+    }
+
     public LibroResponse save(@NonNull LibroRequest libroRequest){
         if(libroRepository.existsByIsbn(libroRequest.isbn())){
             throw new BusinessRuleException("Libro existente");

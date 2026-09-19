@@ -23,7 +23,7 @@ public class LibroController {
     private final LibroRepository libroRepository;
 
     @GetMapping
-    public ResponseEntity <List <LibroResponse>> getAllLibros(@RequestParam String titulo){
+    public ResponseEntity <List<LibroResponse>> getAllLibros(@RequestParam String titulo){
         if(titulo.isBlank()) {
             List<LibroResponse> libros = libroService.getLibros();
             return ResponseEntity.ok(libros);
