@@ -26,14 +26,14 @@ public class LibroController {
     public ResponseEntity <List<LibroResponse>> getAllLibros(@RequestParam (required = false) String titulo,
         @RequestParam(required = false) Boolean disponible
     ){
-        if(titulo.isBlank() && disponible == null) {
+        if(titulo == null && disponible == null) {
             List<LibroResponse> libros = libroService.getLibros();
             return ResponseEntity.ok(libros);
         }
-        if (titulo.isBlank() && disponible != null){
+        if (titulo == null){
             return ResponseEntity.ok(libroService.getLibrosActivos(disponible));
         }
-        if(!titulo.isBlank() && disponible != null){
+        if(disponible != null){
             return ResponseEntity.ok(libroService.getLibrosActivosPorTitulo(titulo, disponible));
         }
         return ResponseEntity.ok(libroService.getLibrosByTitulo(titulo));
